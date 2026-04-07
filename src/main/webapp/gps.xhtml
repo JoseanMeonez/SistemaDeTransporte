@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:form id="formGps">
+            <p:panel header="Módulo de Telemetría y Seguimiento Satelital">
+                
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <p:chip label="Unidad Activa: Mercedes Benz" icon="pi pi-truck" style="margin-right: 10px;" />
+                    
+                    <span style="background-color: #C8E6C9; color: #256029; padding: 7px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em; display: inline-block;">
+                        <i class="pi pi-spin pi-spinner" style="margin-right: 5px;"></i> 
+                        TRANSMITIENDO: EN RUTA (SPS - PUERTO CORTÉS)
+                    </span>
+                </div>
+
+              <div style="border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                <iframe 
+                width="100%" 
+                height="550" 
+                style="border:0;"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3844.402636545226!2d-88.0289836851486!3d15.5165487892248!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f6643640248037d%3A0xc395b0b2e35e729!2sSan%20Pedro%20Sula!5e0!3m2!1ses!2shn!4v1712115000000!5m2!1ses!2shn" 
+                allowfullscreen="true"
+                 loading="lazy">
+    </iframe>
+</div>
+
+                <p:staticMessage severity="info" summary="AVISO DE SEGURIDAD:" 
+                                 detail="Este mapa muestra la última posición reportada por el dispositivo GPS a través de la red celular." 
+                                 style="width: 100%; margin-top: 20px;"/>
+            </p:panel>
+        </h:form>
+    </ui:define>
+</ui:composition>
