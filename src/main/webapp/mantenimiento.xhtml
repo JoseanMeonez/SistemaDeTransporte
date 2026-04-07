@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:form id="formManto">
+            <p:panel header="Registro de Mantenimiento Preventivo">
+                <p:panelGrid columns="4" layout="grid">
+                    <p:outputLabel value="Vehículo (Placa):" />
+                    <p:selectOneMenu value="#{mantenimientoBean.mantenimiento.idVehiculo}" required="true">
+                        <f:selectItem itemLabel="-- Seleccione --" itemValue="" />
+                        <f:selectItems value="#{mantenimientoBean.listaVehiculos}" var="v" 
+                                       itemLabel="#{v.placa} - #{v.marca}" itemValue="#{v.id}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Fecha:" />
+                    <p:calendar value="#{mantenimientoBean.mantenimiento.fechaMantenimiento}" pattern="yyyy-MM-dd" />
+
+                    <p:outputLabel value="Costo (Lps):" />
+                    <p:inputNumber value="#{mantenimientoBean.mantenimiento.costo}" symbol="L " />
+
+                    <p:outputLabel value="Taller:" />
+                    <p:inputText value="#{mantenimientoBean.mantenimiento.taller}" />
+                </p:panelGrid>
+                
+                <p:commandButton value="Registrar Mantenimiento" actionListener="#{mantenimientoBean.registrar()}" 
+                                 update="tablaManto, @form" icon="pi pi-check-circle" styleClass="mt-3" />
+            </p:panel>
+
+            <p:dataTable id="tablaManto" value="#{mantenimientoBean.listaMantenimientos}" var="m" styleClass="mt-4">
+                <p:column headerText="Fecha">#{m.fechaMantenimiento}</p:column>
+                <p:column headerText="Vehículo">#{m.placaVehiculo}</p:column>
+                <p:column headerText="Taller">#{m.taller}</p:column>
+                <p:column headerText="Costo">L. #{m.costo}</p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>
