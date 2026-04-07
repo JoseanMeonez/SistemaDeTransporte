@@ -3,6 +3,8 @@ package hn.uth.sistemadetransporte.controller;
 import hn.uth.sistemadetransporte.model.dao.RutaDAO;
 import hn.uth.sistemadetransporte.model.entities.Ruta;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
@@ -25,10 +27,39 @@ public class RutaBean implements Serializable {
         listaRutas = dao.listar();
     }
 
+    public void prepararNuevo() {
+        ruta = new Ruta();
+    }
+
+    public void guardar() {
+        try {
+            if (ruta.getId() == 0) {
+                dao.guardar(ruta);
+            } else {
+                dao.editar(ruta);
+            }
+            listar();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Exito", "Ruta guardada"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+        }
+    }
+
+    public void eliminar(int id) {
+        try {
+            dao.inactivar(id);
+            listar();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Eliminado", "Ruta inactivada"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+        }
+    }
+
     public void registrar() {
-        dao.guardar(ruta);
-        ruta = new Ruta(); // Limpiar formulario
-        listar(); // Refrescar tabla
+        guardar();
+        prepararNuevo();
     }
 
     // Getters y Setters (Importante para que JSF encuentre las propiedades)

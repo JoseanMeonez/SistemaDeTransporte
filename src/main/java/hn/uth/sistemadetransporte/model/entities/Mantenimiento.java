@@ -57,6 +57,10 @@ public class Mantenimiento implements Serializable {
         this.fechaMantenimiento = fechaMantenimiento;
     }
 
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
     public void setCosto(double costo) {
         this.costo = costo;
     }

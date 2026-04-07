@@ -20,10 +20,13 @@ public class CombustibleDAO {
             while (rs.next()) {
                 Combustible c = new Combustible();
                 c.setId(rs.getInt("id"));
+                c.setIdVehiculo(rs.getInt("id_vehiculo"));
                 c.setFecha(rs.getDate("fecha"));
                 c.setTipoCombustible(rs.getString("tipo_combustible"));
                 c.setGalones(rs.getDouble("galones"));
+                c.setPrecioGalon(rs.getDouble("precio_galon"));
                 c.setTotalPagado(rs.getDouble("total_pagado"));
+                c.setKilometrajeActual(rs.getInt("kilometraje_actual"));
                 c.setPlacaVehiculo(rs.getString("placa"));
                 lista.add(c);
             }
@@ -44,6 +47,35 @@ public class CombustibleDAO {
             ps.setDouble(5, c.getPrecioGalon());
             ps.setDouble(6, c.getTotalPagado());
             ps.setInt(7, c.getKilometrajeActual());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editar(Combustible c) {
+        String sql = "UPDATE combustible SET id_vehiculo=?, fecha=?, tipo_combustible=?, galones=?, precio_galon=?, total_pagado=?, kilometraje_actual=? WHERE id=?";
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, c.getIdVehiculo());
+            ps.setDate(2, new Date(c.getFecha().getTime()));
+            ps.setString(3, c.getTipoCombustible());
+            ps.setDouble(4, c.getGalones());
+            ps.setDouble(5, c.getPrecioGalon());
+            ps.setDouble(6, c.getTotalPagado());
+            ps.setInt(7, c.getKilometrajeActual());
+            ps.setInt(8, c.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void eliminar(int id) {
+        String sql = "DELETE FROM combustible WHERE id=?";
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -84,6 +84,10 @@ public class Combustible implements Serializable {
         this.totalPagado = totalPagado;
     }
 
+    public void setKilometrajeActual(int kilometrajeActual) {
+        this.kilometrajeActual = kilometrajeActual;
+    }
+
     public void setPlacaVehiculo(String placaVehiculo) {
         this.placaVehiculo = placaVehiculo;
     }

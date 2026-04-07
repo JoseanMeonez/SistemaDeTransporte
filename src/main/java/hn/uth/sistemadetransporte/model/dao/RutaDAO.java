@@ -36,23 +36,42 @@ public class RutaDAO {
     }
 
     public void guardar(Ruta r) {
-        String sql = "INSERT INTO rutas (nombre_ruta, origen, destino, distancia_km) VALUES (?,?,?,?)";
+        String sql = "INSERT INTO rutas (nombre_ruta, origen, destino, distancia_km, estado) VALUES (?,?,?,?, 'Activo')";
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql)) {
-
-            System.out.println("Intentando guardar ruta: " + r.getNombreRuta()); // TESTIGO 1
-
             ps.setString(1, r.getNombreRuta());
             ps.setString(2, r.getOrigen());
             ps.setString(3, r.getDestino());
             ps.setDouble(4, r.getDistanciaKm());
-
-            int filas = ps.executeUpdate();
-            System.out.println("Filas insertadas: " + filas); // TESTIGO 2
-
+            ps.executeUpdate();
         } catch (SQLException e) {
-            System.err.println("ERROR SQL AL GUARDAR: " + e.getMessage());
-            e.printStackTrace(); // Esto te dirá exactamente qué columna falla
+            System.err.println("ERROR SQL AL GUARDAR RUTA: " + e.getMessage());
+        }
+    }
+
+    public void editar(Ruta r) {
+        String sql = "UPDATE rutas SET nombre_ruta=?, origen=?, destino=?, distancia_km=? WHERE id=?";
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setString(1, r.getNombreRuta());
+            ps.setString(2, r.getOrigen());
+            ps.setString(3, r.getDestino());
+            ps.setDouble(4, r.getDistanciaKm());
+            ps.setInt(5, r.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("ERROR SQL AL EDITAR RUTA: " + e.getMessage());
+        }
+    }
+
+    public void inactivar(int id) {
+        String sql = "UPDATE rutas SET estado='Inactivo' WHERE id=?";
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("ERROR SQL AL INACTIVAR RUTA: " + e.getMessage());
         }
     }
 }

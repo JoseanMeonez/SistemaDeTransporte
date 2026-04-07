@@ -8,42 +8,122 @@
     <ui:define name="title">Combustible - Sistema de Transporte</ui:define>
 
     <ui:define name="content">
-        <h:form id="formCombustible">
-            <p:panel header="Registro de Combustible">
-                <p:panelGrid columns="4" layout="grid">
-                    <p:outputLabel value="Vehículo:" />
-                    <p:selectOneMenu value="#{combustibleBean.combustible.idVehiculo}" required="true">
-                        <f:selectItems value="#{combustibleBean.listaVehiculos}" var="v" 
-                                       itemLabel="#{v.placa}" itemValue="#{v.id}" />
-                    </p:selectOneMenu>
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Operación diaria</p>
+                <h2 class="page-title">Gestión de combustible</h2>
+                <p class="page-subtitle">
+                    Registra, edita y elimina cargas de combustible por vehículo en una sola vista.
+                </p>
+            </div>
 
-                    <p:outputLabel value="Fecha:" />
-                    <p:calendar value="#{combustibleBean.combustible.fecha}" pattern="yyyy-MM-dd" />
+            <p:button value="Volver al panel" outcome="menu" icon="pi pi-home" styleClass="quick-action-button quick-action-button--secondary" />
+        </section>
 
-                    <p:outputLabel value="Galones:" />
-                    <p:inputNumber value="#{combustibleBean.combustible.galones}">
-                        <p:ajax event="blur" listener="#{combustibleBean.calcularTotal()}" update="txtTotal" />
-                    </p:inputNumber>
+        <h:form id="formLista">
+            <p:growl id="msjs" showDetail="true" />
 
-                    <p:outputLabel value="Precio por Galón:" />
-                    <p:inputNumber value="#{combustibleBean.combustible.precioGalon}">
-                        <p:ajax event="blur" listener="#{combustibleBean.calcularTotal()}" update="txtTotal" />
-                    </p:inputNumber>
+            <div class="surface-card feature-panel">
+                <div class="toolbar-shell">
+                    <span class="status-chip status-chip--info">
+                        <i class="pi pi-percentage"></i>
+                        #{empty combustibleBean.listaCombustible ? 0 : combustibleBean.listaCombustible.size()} registros de combustible
+                    </span>
 
-                    <p:outputLabel value="Total a Pagar:" />
-                    <p:inputNumber id="txtTotal" value="#{combustibleBean.combustible.totalPagado}" readonly="true" symbol="L. " />
-                </p:panelGrid>
-                
-                <p:commandButton value="Guardar Carga" actionListener="#{combustibleBean.registrar()}" 
-                                 update="tablaComb, @form" icon="pi pi-tint" styleClass="mt-3" />
-            </p:panel>
+                    <p:commandButton value="Nueva Carga"
+                                     icon="pi pi-plus"
+                                     actionListener="#{combustibleBean.prepararNuevo()}"
+                                     oncomplete="PF('dlgCombustible').show()"
+                                     update=":formDialogo:pnlCombustible"
+                                     styleClass="ui-button-success" />
+                </div>
 
-            <p:dataTable id="tablaComb" value="#{combustibleBean.listaCombustible}" var="c" styleClass="mt-4">
-                <p:column headerText="Fecha">#{c.fecha}</p:column>
-                <p:column headerText="Vehículo">#{c.placaVehiculo}</p:column>
-                <p:column headerText="Galones">#{c.galones}</p:column>
-                <p:column headerText="Total Lps.">#{c.totalPagado}</p:column>
-            </p:dataTable>
+                <p:dataTable id="dt-combustible"
+                             value="#{combustibleBean.listaCombustible}"
+                             var="c"
+                             paginator="true"
+                             rows="5"
+                             emptyMessage="No hay cargas de combustible registradas."
+                             styleClass="app-table">
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{c.fecha}">
+                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Vehículo">#{c.placaVehiculo}</p:column>
+                    <p:column headerText="Tipo">#{c.tipoCombustible}</p:column>
+                    <p:column headerText="Galones">#{c.galones}</p:column>
+                    <p:column headerText="Total Lps.">#{c.totalPagado}</p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":formDialogo:pnlCombustible"
+                                         oncomplete="PF('dlgCombustible').show()">
+                            <f:setPropertyActionListener value="#{c}" target="#{combustibleBean.combustible}" />
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-trash"
+                                         actionListener="#{combustibleBean.eliminar(c.id)}"
+                                         update="@form"
+                                         styleClass="ui-button-danger">
+                            <p:confirm header="Confirmación"
+                                       message="¿Eliminar carga de combustible?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" />
+                </p:confirmDialog>
+            </div>
         </h:form>
+
+        <p:dialog header="Datos de Combustible"
+                  widgetVar="dlgCombustible"
+                  modal="true"
+                  responsive="true"
+                  width="560"
+                  styleClass="app-dialog">
+            <h:form id="formDialogo">
+                <p:outputPanel id="pnlCombustible">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Vehículo" />
+                        <p:selectOneMenu value="#{combustibleBean.combustible.idVehiculo}" required="true">
+                            <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{combustibleBean.listaVehiculos}" var="v"
+                                           itemLabel="#{v.placa}" itemValue="#{v.id}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Fecha" />
+                        <p:calendar value="#{combustibleBean.combustible.fecha}" pattern="yyyy-MM-dd" required="true" />
+
+                        <p:outputLabel value="Tipo de combustible" />
+                        <p:inputText value="#{combustibleBean.combustible.tipoCombustible}" />
+
+                        <p:outputLabel value="Galones" />
+                        <p:inputNumber value="#{combustibleBean.combustible.galones}">
+                            <p:ajax event="blur" listener="#{combustibleBean.calcularTotal()}" update="txtTotal" />
+                        </p:inputNumber>
+
+                        <p:outputLabel value="Precio por Galón" />
+                        <p:inputNumber value="#{combustibleBean.combustible.precioGalon}">
+                            <p:ajax event="blur" listener="#{combustibleBean.calcularTotal()}" update="txtTotal" />
+                        </p:inputNumber>
+
+                        <p:outputLabel value="Kilometraje actual" />
+                        <p:spinner value="#{combustibleBean.combustible.kilometrajeActual}" min="0" />
+
+                        <p:outputLabel value="Total a Pagar" />
+                        <p:inputNumber id="txtTotal" value="#{combustibleBean.combustible.totalPagado}" readonly="true" symbol="L. " />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{combustibleBean.guardar()}"
+                                     update=":formLista:dt-combustible :formLista:msjs"
+                                     oncomplete="PF('dlgCombustible').hide()"
+                                     styleClass="quick-action-button mt-3" />
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

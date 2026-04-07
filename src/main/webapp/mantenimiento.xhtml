@@ -8,36 +8,111 @@
     <ui:define name="title">Mantenimiento - Sistema de Transporte</ui:define>
 
     <ui:define name="content">
-        <h:form id="formManto">
-            <p:panel header="Registro de Mantenimiento Preventivo">
-                <p:panelGrid columns="4" layout="grid">
-                    <p:outputLabel value="Vehículo (Placa):" />
-                    <p:selectOneMenu value="#{mantenimientoBean.mantenimiento.idVehiculo}" required="true">
-                        <f:selectItem itemLabel="-- Seleccione --" itemValue="" />
-                        <f:selectItems value="#{mantenimientoBean.listaVehiculos}" var="v" 
-                                       itemLabel="#{v.placa} - #{v.marca}" itemValue="#{v.id}" />
-                    </p:selectOneMenu>
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Operación de flota</p>
+                <h2 class="page-title">Gestión de mantenimiento</h2>
+                <p class="page-subtitle">
+                    Registra, edita y elimina mantenimientos preventivos con trazabilidad por vehículo.
+                </p>
+            </div>
 
-                    <p:outputLabel value="Fecha:" />
-                    <p:calendar value="#{mantenimientoBean.mantenimiento.fechaMantenimiento}" pattern="yyyy-MM-dd" />
+            <p:button value="Volver al panel" outcome="menu" icon="pi pi-home" styleClass="quick-action-button quick-action-button--secondary" />
+        </section>
 
-                    <p:outputLabel value="Costo (Lps):" />
-                    <p:inputNumber value="#{mantenimientoBean.mantenimiento.costo}" symbol="L " />
+        <h:form id="formLista">
+            <p:growl id="msjs" showDetail="true" />
 
-                    <p:outputLabel value="Taller:" />
-                    <p:inputText value="#{mantenimientoBean.mantenimiento.taller}" />
-                </p:panelGrid>
-                
-                <p:commandButton value="Registrar Mantenimiento" actionListener="#{mantenimientoBean.registrar()}" 
-                                 update="tablaManto, @form" icon="pi pi-check-circle" styleClass="mt-3" />
-            </p:panel>
+            <div class="surface-card feature-panel">
+                <div class="toolbar-shell">
+                    <span class="status-chip status-chip--info">
+                        <i class="pi pi-calendar-plus"></i>
+                        #{empty mantenimientoBean.listaMantenimientos ? 0 : mantenimientoBean.listaMantenimientos.size()} mantenimientos
+                    </span>
 
-            <p:dataTable id="tablaManto" value="#{mantenimientoBean.listaMantenimientos}" var="m" styleClass="mt-4">
-                <p:column headerText="Fecha">#{m.fechaMantenimiento}</p:column>
-                <p:column headerText="Vehículo">#{m.placaVehiculo}</p:column>
-                <p:column headerText="Taller">#{m.taller}</p:column>
-                <p:column headerText="Costo">L. #{m.costo}</p:column>
-            </p:dataTable>
+                    <p:commandButton value="Nuevo Mantenimiento"
+                                     icon="pi pi-plus"
+                                     actionListener="#{mantenimientoBean.prepararNuevo()}"
+                                     oncomplete="PF('dlgMantenimiento').show()"
+                                     update=":formDialogo:pnlMantenimiento"
+                                     styleClass="ui-button-success" />
+                </div>
+
+                <p:dataTable id="dt-mantenimiento"
+                             value="#{mantenimientoBean.listaMantenimientos}"
+                             var="m"
+                             paginator="true"
+                             rows="5"
+                             emptyMessage="No hay mantenimientos registrados."
+                             styleClass="app-table">
+                    <p:column headerText="Fecha">
+                        <h:outputText value="#{m.fechaMantenimiento}">
+                            <f:convertDateTime pattern="yyyy-MM-dd" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Vehículo">#{m.placaVehiculo}</p:column>
+                    <p:column headerText="Taller">#{m.taller}</p:column>
+                    <p:column headerText="Costo">L. #{m.costo}</p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":formDialogo:pnlMantenimiento"
+                                         oncomplete="PF('dlgMantenimiento').show()">
+                            <f:setPropertyActionListener value="#{m}" target="#{mantenimientoBean.mantenimiento}" />
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-trash"
+                                         actionListener="#{mantenimientoBean.eliminar(m.id)}"
+                                         update="@form"
+                                         styleClass="ui-button-danger">
+                            <p:confirm header="Confirmación"
+                                       message="¿Eliminar mantenimiento?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" />
+                </p:confirmDialog>
+            </div>
         </h:form>
+
+        <p:dialog header="Datos de Mantenimiento"
+                  widgetVar="dlgMantenimiento"
+                  modal="true"
+                  responsive="true"
+                  width="560"
+                  styleClass="app-dialog">
+            <h:form id="formDialogo">
+                <p:outputPanel id="pnlMantenimiento">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Vehículo" />
+                        <p:selectOneMenu value="#{mantenimientoBean.mantenimiento.idVehiculo}" required="true">
+                            <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{mantenimientoBean.listaVehiculos}" var="v"
+                                           itemLabel="#{v.placa} - #{v.marca}" itemValue="#{v.id}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Fecha" />
+                        <p:calendar value="#{mantenimientoBean.mantenimiento.fechaMantenimiento}" pattern="yyyy-MM-dd" required="true" />
+
+                        <p:outputLabel value="Descripción" />
+                        <p:inputTextarea value="#{mantenimientoBean.mantenimiento.descripcion}" rows="3" autoResize="false" />
+
+                        <p:outputLabel value="Costo (Lps)" />
+                        <p:inputNumber value="#{mantenimientoBean.mantenimiento.costo}" symbol="L " minValue="0" />
+
+                        <p:outputLabel value="Taller" />
+                        <p:inputText value="#{mantenimientoBean.mantenimiento.taller}" />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{mantenimientoBean.guardar()}"
+                                     update=":formLista:dt-mantenimiento :formLista:msjs"
+                                     oncomplete="PF('dlgMantenimiento').hide()"
+                                     styleClass="quick-action-button mt-3" />
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
     </ui:define>
 </ui:composition>

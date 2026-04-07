@@ -5,10 +5,13 @@ import hn.uth.sistemadetransporte.model.dao.CombustibleDAO;
 import hn.uth.sistemadetransporte.model.dao.VehiculoDAO;
 import hn.uth.sistemadetransporte.model.entities.*;
 import jakarta.annotation.PostConstruct;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Named
@@ -23,7 +26,15 @@ public class CombustibleBean implements Serializable {
 
     @PostConstruct
     public void init() {
+        listar();
+        cargarVehiculos();
+    }
+
+    public void listar() {
         listaCombustible = dao.listar();
+    }
+
+    public void cargarVehiculos() {
         listaVehiculos = vDao.listar();
     }
 
@@ -31,10 +42,45 @@ public class CombustibleBean implements Serializable {
         combustible.setTotalPagado(combustible.getGalones() * combustible.getPrecioGalon());
     }
 
-    public void registrar() {
-        dao.guardar(combustible);
+    public void prepararNuevo() {
         combustible = new Combustible();
-        listaCombustible = dao.listar();
+        combustible.setFecha(new Date());
+    }
+
+    public void guardar() {
+        if (combustible.getFecha() == null) {
+            combustible.setFecha(new Date());
+        }
+        calcularTotal();
+
+        try {
+            if (combustible.getId() == 0) {
+                dao.guardar(combustible);
+            } else {
+                dao.editar(combustible);
+            }
+            listar();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Exito", "Registro de combustible guardado"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+        }
+    }
+
+    public void eliminar(int id) {
+        try {
+            dao.eliminar(id);
+            listar();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Eliminado", "Registro de combustible eliminado"));
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+        }
+    }
+
+    public void registrar() {
+        guardar();
+        prepararNuevo();
     }
 
     public Combustible getCombustible() {

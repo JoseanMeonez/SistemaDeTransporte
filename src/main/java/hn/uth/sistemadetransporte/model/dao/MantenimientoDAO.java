@@ -16,14 +16,16 @@ public class MantenimientoDAO {
     public List<Mantenimiento> listar() {
         List<Mantenimiento> lista = new ArrayList<>();
         String sql = "SELECT m.*, v.placa FROM mantenimiento m " +
-                "INNER JOIN vehiculos v ON m.id_vehiculo = v.id";
+                "INNER JOIN vehiculos v ON m.id_vehiculo = v.id ORDER BY m.fecha_mantenimiento DESC";
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Mantenimiento m = new Mantenimiento();
                 m.setId(rs.getInt("id"));
+                m.setIdVehiculo(rs.getInt("id_vehiculo"));
                 m.setFechaMantenimiento(rs.getDate("fecha_mantenimiento"));
+                m.setDescripcion(rs.getString("descripcion"));
                 m.setCosto(rs.getDouble("costo"));
                 m.setTaller(rs.getString("taller"));
                 m.setPlacaVehiculo(rs.getString("placa"));
@@ -62,6 +64,43 @@ public class MantenimientoDAO {
 
         } catch (SQLException e) {
             System.err.println("Error al insertar mantenimiento: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void editar(Mantenimiento m) {
+        String sql = "UPDATE mantenimiento SET id_vehiculo=?, fecha_mantenimiento=?, descripcion=?, costo=?, taller=? WHERE id=?";
+
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, m.getIdVehiculo());
+            if (m.getFechaMantenimiento() != null) {
+                ps.setDate(2, new Date(m.getFechaMantenimiento().getTime()));
+            } else {
+                ps.setDate(2, new Date(System.currentTimeMillis()));
+            }
+            ps.setString(3, m.getDescripcion());
+            ps.setDouble(4, m.getCosto());
+            ps.setString(5, m.getTaller());
+            ps.setInt(6, m.getId());
+
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al editar mantenimiento: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void eliminar(int id) {
+        String sql = "DELETE FROM mantenimiento WHERE id=?";
+
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar mantenimiento: " + e.getMessage());
             e.printStackTrace();
         }
     }
