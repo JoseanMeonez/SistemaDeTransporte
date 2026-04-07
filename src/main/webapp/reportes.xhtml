@@ -1,17 +1,31 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:p="http://primefaces.org/ui">
-    <h:head><title>Reportes Estadísticos</title></h:head>
-    <h:body>
-        <h:form>
-            <p:card style="width: 50%; margin: 0 auto; text-align: center;">
-                <h2>Distribución de Flota por Marca</h2>
-            <p:donutChart model="#{chartBean.donutModel}" style="width: 100%; height: 500px;"/>
-            </p:card>
-            
-            <div style="text-align: center; margin-top: 20px;">
-                <p:button value="Volver al Menú" outcome="menu" icon="pi pi-home" />
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Reportes - Sistema de Transporte</ui:define>
+
+    <ui:define name="content">
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Analítica operativa</p>
+                <h2 class="page-title">Reportes estadísticos</h2>
+                <p class="page-subtitle">
+                    Visualiza la distribución de la flota por marca con una vista simple y centrada en los datos.
+                </p>
             </div>
-        </h:form>
-    </h:body>
-</html>
+
+            <p:button value="Volver al panel" outcome="menu" icon="pi pi-home" styleClass="quick-action-button quick-action-button--secondary" />
+        </section>
+
+        <div class="surface-card feature-panel">
+            <div class="panel-head">
+                <h3>Distribución de flota por marca</h3>
+                <p>El gráfico resume la cantidad de vehículos activos agrupados por fabricante.</p>
+            </div>
+
+            <p:donutChart model="#{chartBean.donutModel}" style="width: 100%; height: 420px;" />
+        </div>
+    </ui:define>
+</ui:composition>

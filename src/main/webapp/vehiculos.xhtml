@@ -1,41 +1,83 @@
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="jakarta.faces.core">
-    <h:head><title>Gestión de Vehículos</title></h:head>
-    <h:body>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Vehículos - Sistema de Transporte</ui:define>
+
+    <ui:define name="content">
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Catálogo operativo</p>
+                <h2 class="page-title">Gestión de vehículos</h2>
+                <p class="page-subtitle">
+                    Registra, edita e inactiva las unidades de la flota desde una sola pantalla.
+                </p>
+            </div>
+
+            <p:button value="Volver al panel" outcome="menu" icon="pi pi-home" styleClass="quick-action-button quick-action-button--secondary" />
+        </section>
+
         <h:form id="formLista">
             <p:growl id="msjs" showDetail="true" />
-            
-            <p:toolbar>
-                <p:toolbarGroup>
-                    <p:commandButton value="Nuevo Vehículo" icon="pi pi-plus" 
+
+            <div class="surface-card feature-panel">
+                <div class="toolbar-shell">
+                    <span class="status-chip status-chip--info">
+                        <i class="pi pi-car"></i>
+                        #{empty vehiculoBean.listaVehiculos ? 0 : vehiculoBean.listaVehiculos.size()} vehículos activos
+                    </span>
+
+                    <p:commandButton value="Nuevo Vehículo"
+                                     icon="pi pi-plus"
                                      actionListener="#{vehiculoBean.prepararNuevo()}"
-                                     oncomplete="PF('dlgVehiculo').show()" update=":formDialogo:pnlVehiculo" />
-                </p:toolbarGroup>
-            </p:toolbar>
+                                     oncomplete="PF('dlgVehiculo').show()"
+                                     update=":formDialogo:pnlVehiculo"
+                                     styleClass="ui-button-success" />
+                </div>
 
-            <p:dataTable id="dt-vehiculos" value="#{vehiculoBean.listaVehiculos}" var="v" paginator="true" rows="5">
-                <p:column headerText="Placa">#{v.placa}</p:column>
-                <p:column headerText="Marca">#{v.marca}</p:column>
-                <p:column headerText="Modelo">#{v.modelo}</p:column>
-                <p:column headerText="Acciones">
-                    <p:commandButton icon="pi pi-pencil" update=":formDialogo:pnlVehiculo" oncomplete="PF('dlgVehiculo').show()">
-                        <f:setPropertyActionListener value="#{v}" target="#{vehiculoBean.vehiculo}" />
-                    </p:commandButton>
-                    <p:commandButton icon="pi pi-trash" actionListener="#{vehiculoBean.eliminar(v.id)}" update="@form" styleClass="ui-button-danger">
-                        <p:confirm header="Confirmación" message="¿Inactivar vehículo?" icon="pi pi-exclamation-triangle" />
-                    </p:commandButton>
-                </p:column>
-            </p:dataTable>
+                <p:dataTable id="dt-vehiculos"
+                             value="#{vehiculoBean.listaVehiculos}"
+                             var="v"
+                             paginator="true"
+                             rows="5"
+                             emptyMessage="No hay vehículos registrados."
+                             styleClass="app-table">
+                    <p:column headerText="Placa">#{v.placa}</p:column>
+                    <p:column headerText="Marca">#{v.marca}</p:column>
+                    <p:column headerText="Modelo">#{v.modelo}</p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":formDialogo:pnlVehiculo"
+                                         oncomplete="PF('dlgVehiculo').show()">
+                            <f:setPropertyActionListener value="#{v}" target="#{vehiculoBean.vehiculo}" />
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-trash"
+                                         actionListener="#{vehiculoBean.eliminar(v.id)}"
+                                         update="@form"
+                                         styleClass="ui-button-danger">
+                            <p:confirm header="Confirmación"
+                                       message="¿Inactivar vehículo?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
 
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
-                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" />
-            </p:confirmDialog>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" />
+                </p:confirmDialog>
+            </div>
         </h:form>
 
-        <p:dialog header="Datos del Vehículo" widgetVar="dlgVehiculo" modal="true">
+        <p:dialog header="Datos del Vehículo"
+                  widgetVar="dlgVehiculo"
+                  modal="true"
+                  responsive="true"
+                  width="560"
+                  styleClass="app-dialog">
             <h:form id="formDialogo">
                 <p:outputPanel id="pnlVehiculo">
                     <h:panelGrid columns="2">
@@ -48,11 +90,13 @@
                         <p:outputLabel value="Año" />
                         <p:spinner value="#{vehiculoBean.vehiculo.anio}" min="2000" max="2026" />
                     </h:panelGrid>
-                    <p:commandButton value="Guardar" actionListener="#{vehiculoBean.guardar()}" 
-                                     update=":formLista:dt-vehiculos :formLista:msjs" 
-                                     oncomplete="PF('dlgVehiculo').hide()" />
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{vehiculoBean.guardar()}"
+                                     update=":formLista:dt-vehiculos :formLista:msjs"
+                                     oncomplete="PF('dlgVehiculo').hide()"
+                                     styleClass="quick-action-button mt-3" />
                 </p:outputPanel>
             </h:form>
         </p:dialog>
-    </h:body>
-</html>
+    </ui:define>
+</ui:composition>
