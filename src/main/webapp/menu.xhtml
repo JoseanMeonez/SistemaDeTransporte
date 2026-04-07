@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+    <h:head>
+        <title>Menú Principal - Sistema Transporte</title>
+        <h:outputStylesheet name="css/estilos.css" /> </h:head>
+    <h:body>
+        <h:form>
+            <p:menubar>
+                <p:submenu label="Gestión" icon="pi pi-fw pi-car">
+                    <p:menuitem value="Vehículos" icon="pi pi-fw pi-truck" url="vehiculos.xhtml"/>
+                    <p:menuitem value="Conductores" icon="pi pi-fw pi-users" url="conductores.xhtml"/>
+                    <p:menuitem value="Rutas" icon="pi pi-fw pi-map" url="rutas.xhtml"/>
+                </p:submenu>
+
+                <p:submenu label="Operaciones" icon="pi pi-fw pi-cog">
+                    <p:menuitem value="Mantenimiento" icon="pi pi-fw pi-calendar-plus" url="mantenimiento.xhtml"/>
+                    <p:menuitem value="Combustible" icon="pi pi-fw pi-percentage" url="combustible.xhtml"/>
+                </p:submenu>
+
+                <p:submenu label="Reportes" icon="pi pi-fw pi-chart-bar">
+                    <p:menuitem value="Estadísticas" icon="pi pi-fw pi-chart-line" url="reportes.xhtml"/>
+                </p:submenu>
+                
+                <p:submenu label="Reportes" icon="pi pi-chart-bar">
+                <p:menuitem value="Estadísticas" outcome="reportes" icon="pi pi-chart-line" />
+                <p:menuitem value="Seguimiento GPS" outcome="gps" icon="pi pi-map-marker" />
+                </p:submenu>
+
+                <f:facet name="options">
+                    <p:commandButton value="Cerrar Sesión" icon="pi pi-fw pi-sign-out" 
+                                     styleClass="ui-button-danger" action="#{loginBean.cerrarSesion()}"/>
+                </f:facet>
+            </p:menubar>
+
+            <div style="padding: 20px; text-align: center;">
+                <h1>Bienvenido al Sistema de Gestión de Transporte</h1>
+                <p:staticMessage severity="info" summary="INFO" detail="Use el menú superior para navegar." />
+                <div style="display: flex; justify-content: center; gap: 20px;">
+    <p:card style="width: 350px; text-align: center;">
+        <f:facet name="title">
+            Flota por Marca
+        </f:facet>
+        <p:donutChart model="#{chartBean.donutModel}" />
+    </p:card>
+</div>
+            </div>
+        </h:form>
+    </h:body>
+</html>
