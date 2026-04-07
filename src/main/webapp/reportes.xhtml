@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head><title>Reportes Estadísticos</title></h:head>
+    <h:body>
+        <h:form>
+            <p:card style="width: 50%; margin: 0 auto; text-align: center;">
+                <h2>Distribución de Flota por Marca</h2>
+            <p:donutChart model="#{chartBean.donutModel}" style="width: 100%; height: 500px;"/>
+            </p:card>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p:button value="Volver al Menú" outcome="menu" icon="pi pi-home" />
+            </div>
+        </h:form>
+    </h:body>
+</html>
