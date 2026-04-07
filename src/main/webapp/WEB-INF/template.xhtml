@@ -3,27 +3,62 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ui="jakarta.faces.facelets"
       xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
-        <title>Sistema de Transporte - Grupo 1</title>
+        <title><ui:insert name="title">Sistema de Transporte</ui:insert></title>
+        <h:outputStylesheet library="css" name="sistema-transporte.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </h:head>
 
-    <h:body>
-        <div id="top">
+    <h:body styleClass="app-shell">
+        <header class="app-header">
+            <div class="app-brand">
+                <div class="brand-mark">ST</div>
+                <div class="brand-copy">
+                    <h1>Sistema de Transporte</h1>
+                    <p>Gestión de flota, rutas y operaciones</p>
+                </div>
+            </div>
+
             <h:form>
-                <p:menubar>
+                <p:menubar styleClass="app-menubar">
                     <p:menuitem value="Inicio" outcome="menu" icon="pi pi-home" />
-                    <p:menuitem value="Vehículos" outcome="vehiculos" icon="pi pi-car" />
-                    <p:menuitem value="Conductores" outcome="conductores" icon="pi pi-users" />
-                    <p:menuitem value="Rutas" outcome="rutas" icon="pi pi-map" />
-                    <p:menuitem value="Salir" action="#{loginBean.cerrarSesion()}" icon="pi pi-sign-out" />
+                    <p:submenu label="Gestión" icon="pi pi-fw pi-car">
+                        <p:menuitem value="Vehículos" outcome="vehiculos" icon="pi pi-car" />
+                        <p:menuitem value="Conductores" outcome="conductores" icon="pi pi-users" />
+                        <p:menuitem value="Rutas" outcome="rutas" icon="pi pi-map" />
+                    </p:submenu>
+
+                    <p:submenu label="Operaciones" icon="pi pi-fw pi-cog">
+                        <p:menuitem value="Mantenimiento" outcome="mantenimiento" icon="pi pi-calendar-plus" />
+                        <p:menuitem value="Combustible" outcome="combustible" icon="pi pi-percentage" />
+                    </p:submenu>
+
+                    <p:submenu label="Reportes" icon="pi pi-fw pi-chart-bar">
+                        <p:menuitem value="Estadísticas" outcome="reportes" icon="pi pi-chart-line" />
+                        <p:menuitem value="Seguimiento GPS" outcome="gps" icon="pi pi-map-marker" />
+                    </p:submenu>
+
+                    <f:facet name="options">
+                        <p:commandButton value="Cerrar Sesión"
+                                         icon="pi pi-sign-out"
+                                         styleClass="app-logout"
+                                         action="#{loginBean.cerrarSesion}" />
+                    </f:facet>
                 </p:menubar>
             </h:form>
-        </div>
+        </header>
 
-        <div id="content" style="padding: 20px;">
-            <ui:insert name="content">Content</ui:insert>
-        </div>
+        <main class="app-main">
+            <div class="app-content">
+                <ui:insert name="content">Content</ui:insert>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <span>Sistema de Gestión de Transporte · Grupo 1</span>
+        </footer>
     </h:body>
 </html>
