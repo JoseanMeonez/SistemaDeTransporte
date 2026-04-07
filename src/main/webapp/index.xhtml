@@ -1,33 +1,55 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
-        <title>Login - Sistema Transporte</title>
-        <style>
-            body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; }
-        </style>
+        <title>Login - Sistema de Transporte</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <h:outputStylesheet library="css" name="sistema-transporte.css" />
     </h:head>
-    <h:body>
-        <h:form>
-            <p:growl id="mensajes" showDetail="true" />
-            <p:card title="Inicio de Sesión" style="width: 25rem; margin-bottom: 2em">
-                <div class="ui-fluid">
-                    <div class="p-field">
-                        <p:outputLabel for="user" value="Usuario" />
-                        <p:inputText id="user" value="#{loginBean.username}" required="true" />
+    <h:body styleClass="login-shell">
+        <div class="login-card">
+            <div class="login-hero">
+                <span class="login-badge">
+                    <i class="pi pi-shield"></i>
+                    Sistema de Transporte
+                </span>
+                <h1 class="login-title">Acceso al sistema</h1>
+                <p class="login-subtitle">
+                    Inicia sesión para administrar flota, rutas, combustible y reportes desde una sola plataforma.
+                </p>
+            </div>
+
+            <div class="login-content">
+                <h:form>
+                    <p:growl id="mensajes" showDetail="true" />
+
+                    <div class="field-block">
+                        <p:outputLabel for="user" value="Usuario" styleClass="field-label" />
+                        <p:inputText id="user"
+                                     value="#{loginBean.username}"
+                                     required="true"
+                                     styleClass="full-width" />
                     </div>
-                    <div class="p-field" style="margin-top: 10px">
-                        <p:outputLabel for="pass" value="Contraseña" />
-                        <p:password id="pass" value="#{loginBean.password}" required="true" />
+
+                    <div class="field-block">
+                        <p:outputLabel for="pass" value="Contraseña" styleClass="field-label" />
+                        <p:password id="pass"
+                                    value="#{loginBean.password}"
+                                    required="true"
+                                    feedback="false"
+                                    styleClass="full-width" />
                     </div>
-                </div>
-                <f:facet name="footer">
-                    <p:commandButton icon="pi pi-check" value="Ingresar" 
-                                     action="#{loginBean.autenticar()}" update="mensajes" />
-                </f:facet>
-            </p:card>
-        </h:form>
+
+                    <p:commandButton icon="pi pi-sign-in"
+                                     value="Ingresar"
+                                     action="#{loginBean.autenticar}"
+                                     update="mensajes"
+                                     styleClass="login-action" />
+                </h:form>
+            </div>
+        </div>
     </h:body>
 </html>

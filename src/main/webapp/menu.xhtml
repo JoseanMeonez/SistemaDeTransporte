@@ -1,53 +1,99 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:f="jakarta.faces.core">
-    <h:head>
-        <title>Menú Principal - Sistema Transporte</title>
-        <h:outputStylesheet name="css/estilos.css" /> </h:head>
-    <h:body>
-        <h:form>
-            <p:menubar>
-                <p:submenu label="Gestión" icon="pi pi-fw pi-car">
-                    <p:menuitem value="Vehículos" icon="pi pi-fw pi-truck" url="vehiculos.xhtml"/>
-                    <p:menuitem value="Conductores" icon="pi pi-fw pi-users" url="conductores.xhtml"/>
-                    <p:menuitem value="Rutas" icon="pi pi-fw pi-map" url="rutas.xhtml"/>
-                </p:submenu>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
 
-                <p:submenu label="Operaciones" icon="pi pi-fw pi-cog">
-                    <p:menuitem value="Mantenimiento" icon="pi pi-fw pi-calendar-plus" url="mantenimiento.xhtml"/>
-                    <p:menuitem value="Combustible" icon="pi pi-fw pi-percentage" url="combustible.xhtml"/>
-                </p:submenu>
+    <ui:define name="title">Panel principal - Sistema de Transporte</ui:define>
 
-                <p:submenu label="Reportes" icon="pi pi-fw pi-chart-bar">
-                    <p:menuitem value="Estadísticas" icon="pi pi-fw pi-chart-line" url="reportes.xhtml"/>
-                </p:submenu>
-                
-                <p:submenu label="Reportes" icon="pi pi-chart-bar">
-                <p:menuitem value="Estadísticas" outcome="reportes" icon="pi pi-chart-line" />
-                <p:menuitem value="Seguimiento GPS" outcome="gps" icon="pi pi-map-marker" />
-                </p:submenu>
-
-                <f:facet name="options">
-                    <p:commandButton value="Cerrar Sesión" icon="pi pi-fw pi-sign-out" 
-                                     styleClass="ui-button-danger" action="#{loginBean.cerrarSesion()}"/>
-                </f:facet>
-            </p:menubar>
-
-            <div style="padding: 20px; text-align: center;">
-                <h1>Bienvenido al Sistema de Gestión de Transporte</h1>
-                <p:staticMessage severity="info" summary="INFO" detail="Use el menú superior para navegar." />
-                <div style="display: flex; justify-content: center; gap: 20px;">
-    <p:card style="width: 350px; text-align: center;">
-        <f:facet name="title">
-            Flota por Marca
-        </f:facet>
-        <p:donutChart model="#{chartBean.donutModel}" />
-    </p:card>
-</div>
+    <ui:define name="content">
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Vista general</p>
+                <h2 class="page-title">Panel de control</h2>
+                <p class="page-subtitle">
+                    Consulta el estado de la flota, abre accesos directos y revisa la distribución por marca desde una sola pantalla.
+                </p>
             </div>
-        </h:form>
-    </h:body>
-</html>
+
+            <span class="status-chip status-chip--success">
+                <i class="pi pi-check-circle"></i>
+                Operación activa
+            </span>
+        </section>
+
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="pi pi-car stat-icon"></i>
+                    Vehículos activos
+                </div>
+                <div class="stat-value">#{empty vehiculoBean.listaVehiculos ? 0 : vehiculoBean.listaVehiculos.size()}</div>
+                <p class="stat-meta">Flota disponible para operación diaria.</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="pi pi-users stat-icon"></i>
+                    Conductores activos
+                </div>
+                <div class="stat-value">#{empty conductorBean.listaConductores ? 0 : conductorBean.listaConductores.size()}</div>
+                <p class="stat-meta">Personal habilitado para salidas y rutas.</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="pi pi-map stat-icon"></i>
+                    Rutas registradas
+                </div>
+                <div class="stat-value">#{empty rutaBean.listaRutas ? 0 : rutaBean.listaRutas.size()}</div>
+                <p class="stat-meta">Cobertura geográfica configurada en el sistema.</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="pi pi-cog stat-icon"></i>
+                    Mantenimientos
+                </div>
+                <div class="stat-value">#{empty mantenimientoBean.listaMantenimientos ? 0 : mantenimientoBean.listaMantenimientos.size()}</div>
+                <p class="stat-meta">Servicios preventivos registrados.</p>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">
+                    <i class="pi pi-percentage stat-icon"></i>
+                    Cargas de combustible
+                </div>
+                <div class="stat-value">#{empty combustibleBean.listaCombustible ? 0 : combustibleBean.listaCombustible.size()}</div>
+                <p class="stat-meta">Movimientos de combustible almacenados.</p>
+            </div>
+        </div>
+
+        <div class="dashboard-layout">
+            <section class="surface-card feature-panel">
+                <div class="panel-head">
+                    <h3>Accesos rápidos</h3>
+                    <p>Entra directo a los módulos de operación más usados.</p>
+                </div>
+
+                <div class="quick-actions">
+                    <p:button value="Vehículos" outcome="vehiculos" icon="pi pi-car" styleClass="quick-action-button" />
+                    <p:button value="Conductores" outcome="conductores" icon="pi pi-users" styleClass="quick-action-button" />
+                    <p:button value="Rutas" outcome="rutas" icon="pi pi-map" styleClass="quick-action-button" />
+                    <p:button value="Mantenimiento" outcome="mantenimiento" icon="pi pi-calendar-plus" styleClass="quick-action-button quick-action-button--secondary" />
+                    <p:button value="Combustible" outcome="combustible" icon="pi pi-percentage" styleClass="quick-action-button quick-action-button--secondary" />
+                    <p:button value="Reportes" outcome="reportes" icon="pi pi-chart-line" styleClass="quick-action-button quick-action-button--secondary" />
+                </div>
+            </section>
+
+            <section class="surface-card feature-panel">
+                <div class="panel-head">
+                    <h3>Flota por marca</h3>
+                    <p>Distribución actual de vehículos activos.</p>
+                </div>
+
+                <p:donutChart model="#{chartBean.donutModel}" style="width: 100%; height: 360px;" />
+            </section>
+        </div>
+    </ui:define>
+</ui:composition>
