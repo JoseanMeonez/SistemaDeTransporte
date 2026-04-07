@@ -1,0 +1,62 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+    <h:head><title>Gestión de Conductores</title></h:head>
+    <h:body>
+        <h:form id="formLista">
+            <p:growl id="msjs" showDetail="true" />
+            
+            <p:toolbar>
+                <p:toolbarGroup>
+                    <p:commandButton value="Nuevo Conductor" icon="pi pi-user-plus" 
+                                     actionListener="#{conductorBean.prepararNuevo()}"
+                                     oncomplete="PF('dlgConductor').show()" update=":formDialogo:pnlConductor" />
+                </p:toolbarGroup>
+            </p:toolbar>
+
+            <p:dataTable id="dt-conductores" value="#{conductorBean.listaConductores}" var="c" paginator="true" rows="5">
+                <p:column headerText="Nombre">#{c.nombre}</p:column>
+                <p:column headerText="DNI">#{c.dni}</p:column>
+                <p:column headerText="Licencia">#{c.licencia}</p:column>
+                <p:column headerText="Teléfono">#{c.telefono}</p:column>
+                <p:column headerText="Acciones">
+                    <p:commandButton icon="pi pi-pencil" update=":formDialogo:pnlConductor" oncomplete="PF('dlgConductor').show()">
+                        <f:setPropertyActionListener value="#{c}" target="#{conductorBean.conductor}" />
+                    </p:commandButton>
+                    <p:commandButton icon="pi pi-trash" actionListener="#{conductorBean.eliminar(c.id)}" update="@form" styleClass="ui-button-danger">
+                        <p:confirm header="Confirmación" message="¿Inactivar conductor?" icon="pi pi-exclamation-triangle" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog header="Detalle del Conductor" widgetVar="dlgConductor" modal="true" responsive="true">
+            <h:form id="formDialogo">
+                <p:outputPanel id="pnlConductor">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel value="Nombre Completo" />
+                        <p:inputText value="#{conductorBean.conductor.nombre}" required="true" />
+                        
+                        <p:outputLabel value="DNI" />
+                        <p:inputText value="#{conductorBean.conductor.dni}" required="true" />
+                        
+                        <p:outputLabel value="Licencia" />
+                        <p:selectOneMenu value="#{conductorBean.conductor.licencia}">
+                            <f:selectItem itemLabel="Seleccione" itemValue="" />
+                            <f:selectItem itemLabel="Liviana" itemValue="LIVIANA" />
+                            <f:selectItem itemLabel="Pesada" itemValue="PESADA" />
+                            <f:selectItem itemLabel="Articulada" itemValue="ARTICULADA" />
+                        </p:selectOneMenu>
+                        
+                        <p:outputLabel value="Teléfono" />
+                        <p:inputMask value="#{conductorBean.conductor.telefono}" mask="9999-9999" />
+                    </h:panelGrid>
+                    <p:commandButton value="Guardar" actionListener="#{conductorBean.guardar()}" 
+                                     update=":formLista:dt-conductores :formLista:msjs" 
+                                     oncomplete="PF('dlgConductor').hide()" style="margin-top: 10px"/>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </h:body>
+</html>
