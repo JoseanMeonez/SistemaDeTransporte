@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">GPS - Sistema de Transporte</ui:define>
+
+    <ui:define name="content">
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Control de ubicaciones</p>
+                <h2 class="page-title">Registros GPS por vehiculo</h2>
+                <p class="page-subtitle">
+                    Administra coordenadas historicas con fecha y hora de actualizacion para cada unidad.
+                </p>
+            </div>
+
+            <p:button value="Volver al panel" outcome="menu" icon="pi pi-home" styleClass="quick-action-button quick-action-button--secondary" />
+        </section>
+
+        <h:form id="formLista">
+            <p:growl id="msjs" showDetail="true" />
+
+            <div class="surface-card feature-panel">
+                <div class="toolbar-shell">
+                    <span class="status-chip status-chip--info">
+                        <i class="pi pi-map-marker"></i>
+                        #{empty gpsBean.listaGps ? 0 : gpsBean.listaGps.size()} registros GPS
+                    </span>
+
+                    <p:commandButton value="Nuevo Registro"
+                                     icon="pi pi-plus"
+                                     actionListener="#{gpsBean.prepararNuevo()}"
+                                     oncomplete="PF('dlgGps').show()"
+                                     update=":formDialogo:pnlGps"
+                                     styleClass="ui-button-success" />
+                </div>
+
+                <p:dataTable id="dt-gps"
+                             value="#{gpsBean.listaGps}"
+                             var="g"
+                             paginator="true"
+                             rows="5"
+                             emptyMessage="No hay registros GPS."
+                             styleClass="app-table">
+                    <p:column headerText="Fecha/Hora">
+                        <h:outputText value="#{g.ultimaActualizacion}">
+                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Vehiculo">#{g.placaVehiculo}</p:column>
+                    <p:column headerText="Latitud">#{g.latitud}</p:column>
+                    <p:column headerText="Longitud">#{g.longitud}</p:column>
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":formDialogo:pnlGps"
+                                         oncomplete="PF('dlgGps').show()">
+                            <f:setPropertyActionListener value="#{g}" target="#{gpsBean.gps}" />
+                        </p:commandButton>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         actionListener="#{gpsBean.eliminar(g.id)}"
+                                         update="@form"
+                                         styleClass="ui-button-danger">
+                            <p:confirm header="Confirmacion"
+                                       message="¿Eliminar registro GPS?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" />
+                </p:confirmDialog>
+            </div>
+        </h:form>
+
+        <p:dialog header="Datos de seguimiento GPS"
+                  widgetVar="dlgGps"
+                  modal="true"
+                  responsive="true"
+                  width="560"
+                  styleClass="app-dialog">
+            <h:form id="formDialogo">
+                <p:outputPanel id="pnlGps">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Vehiculo" />
+                        <p:selectOneMenu value="#{gpsBean.gps.idVehiculo}" required="true" requiredMessage="Seleccione un vehiculo">
+                            <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{gpsBean.listaVehiculos}" var="v"
+                                           itemLabel="#{v.placa}" itemValue="#{v.id}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Ultima actualizacion" />
+                        <p:calendar value="#{gpsBean.gps.ultimaActualizacion}"
+                                    pattern="yyyy-MM-dd HH:mm:ss"
+                                    showOn="button"
+                                    required="true"
+                                    requiredMessage="La ultima actualizacion es obligatoria" />
+
+                        <p:outputLabel value="Latitud" />
+                        <p:inputNumber value="#{gpsBean.gps.latitud}"
+                                       decimalPlaces="6"
+                                       minValue="-90"
+                                       maxValue="90"
+                                       required="true"
+                                       requiredMessage="La latitud es obligatoria" />
+
+                        <p:outputLabel value="Longitud" />
+                        <p:inputNumber value="#{gpsBean.gps.longitud}"
+                                       decimalPlaces="6"
+                                       minValue="-180"
+                                       maxValue="180"
+                                       required="true"
+                                       requiredMessage="La longitud es obligatoria" />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{gpsBean.guardar()}"
+                                     update=":formLista:dt-gps :formLista:msjs"
+                                     oncomplete="PF('dlgGps').hide()"
+                                     styleClass="quick-action-button mt-3" />
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
