@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Login - Sistema Transporte</title>
+        <style>
+            body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; }
+        </style>
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:growl id="mensajes" showDetail="true" />
+            <p:card title="Inicio de Sesión" style="width: 25rem; margin-bottom: 2em">
+                <div class="ui-fluid">
+                    <div class="p-field">
+                        <p:outputLabel for="user" value="Usuario" />
+                        <p:inputText id="user" value="#{loginBean.username}" required="true" />
+                    </div>
+                    <div class="p-field" style="margin-top: 10px">
+                        <p:outputLabel for="pass" value="Contraseña" />
+                        <p:password id="pass" value="#{loginBean.password}" required="true" />
+                    </div>
+                </div>
+                <f:facet name="footer">
+                    <p:commandButton icon="pi pi-check" value="Ingresar" 
+                                     action="#{loginBean.autenticar()}" update="mensajes" />
+                </f:facet>
+            </p:card>
+        </h:form>
+    </h:body>
+</html>
