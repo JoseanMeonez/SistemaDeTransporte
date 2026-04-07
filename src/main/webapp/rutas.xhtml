@@ -1,0 +1,43 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:form id="formRutas">
+            <p:growl id="msjs" showDetail="true" />
+
+            <p:panel header="Gestión de Rutas de Transporte">
+                <p:panelGrid columns="4" layout="grid">
+                    <p:outputLabel value="Nombre Ruta:" />
+                    <p:inputText value="#{rutaBean.ruta.nombreRuta}" required="true" />
+                    
+                    <p:outputLabel value="Origen:" />
+                    <p:inputText value="#{rutaBean.ruta.origen}" required="true" />
+                    
+                    <p:outputLabel value="Destino:" />
+                    <p:inputText value="#{rutaBean.ruta.destino}" required="true" />
+                    
+                    <p:outputLabel value="Distancia (Km):" />
+                    <p:inputNumber value="#{rutaBean.ruta.distanciaKm}" decimalPlaces="2" />
+                </p:panelGrid>
+                
+                <p:commandButton value="Guardar Ruta" 
+                                 actionListener="#{rutaBean.registrar()}" 
+                 update="tablaRutas, msjs" 
+                 process="@form" 
+                 icon="pi pi-save" />
+            </p:panel>
+
+            <p:dataTable id="tablaRutas" value="#{rutaBean.listaRutas}" var="r" 
+                         styleClass="mt-4" rows="10" paginator="true">
+                <p:column headerText="ID">#{r.id}</p:column>
+                <p:column headerText="Ruta">#{r.nombreRuta}</p:column>
+                <p:column headerText="Origen">#{r.origen}</p:column>
+                <p:column headerText="Destino">#{r.destino}</p:column>
+                <p:column headerText="Distancia Km">#{r.distanciaKm}</p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>
