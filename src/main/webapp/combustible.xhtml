@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="content">
+        <h:form id="formCombustible">
+            <p:panel header="Registro de Combustible">
+                <p:panelGrid columns="4" layout="grid">
+                    <p:outputLabel value="Vehículo:" />
+                    <p:selectOneMenu value="#{combustibleBean.combustible.idVehiculo}" required="true">
+                        <f:selectItems value="#{combustibleBean.listaVehiculos}" var="v" 
+                                       itemLabel="#{v.placa}" itemValue="#{v.id}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Fecha:" />
+                    <p:calendar value="#{combustibleBean.combustible.fecha}" pattern="yyyy-MM-dd" />
+
+                    <p:outputLabel value="Galones:" />
+                    <p:inputNumber value="#{combustibleBean.combustible.galones}">
+                        <p:ajax event="blur" listener="#{combustibleBean.calcularTotal()}" update="txtTotal" />
+                    </p:inputNumber>
+
+                    <p:outputLabel value="Precio por Galón:" />
+                    <p:inputNumber value="#{combustibleBean.combustible.precioGalon}">
+                        <p:ajax event="blur" listener="#{combustibleBean.calcularTotal()}" update="txtTotal" />
+                    </p:inputNumber>
+
+                    <p:outputLabel value="Total a Pagar:" />
+                    <p:inputNumber id="txtTotal" value="#{combustibleBean.combustible.totalPagado}" readonly="true" symbol="L. " />
+                </p:panelGrid>
+                
+                <p:commandButton value="Guardar Carga" actionListener="#{combustibleBean.registrar()}" 
+                                 update="tablaComb, @form" icon="pi pi-tint" styleClass="mt-3" />
+            </p:panel>
+
+            <p:dataTable id="tablaComb" value="#{combustibleBean.listaCombustible}" var="c" styleClass="mt-4">
+                <p:column headerText="Fecha">#{c.fecha}</p:column>
+                <p:column headerText="Vehículo">#{c.placaVehiculo}</p:column>
+                <p:column headerText="Galones">#{c.galones}</p:column>
+                <p:column headerText="Total Lps.">#{c.totalPagado}</p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>
