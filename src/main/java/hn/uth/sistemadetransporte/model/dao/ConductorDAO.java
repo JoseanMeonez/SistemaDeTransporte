@@ -14,7 +14,7 @@ public class ConductorDAO {
 
     public List<Conductor> listar() {
         List<Conductor> lista = new ArrayList<>();
-        String sql = "SELECT * FROM conductores WHERE estado = 'Activo'";
+        String sql = "SELECT * FROM conductores WHERE esta_activo = TRUE";
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -34,12 +34,13 @@ public class ConductorDAO {
     }
 
     public void guardar(Conductor c) throws SQLException {
-        String sql = "INSERT INTO conductores (nombre, dni, licencia, telefono, estado) VALUES (?,?,?,?,'Activo')";
+        String sql = "INSERT INTO conductores (nombre, dni, licencia, telefono, esta_activo) VALUES (?,?,?,?,?)";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setString(1, c.getNombre());
             ps.setString(2, c.getDni());
             ps.setString(3, c.getLicencia());
             ps.setString(4, c.getTelefono());
+            ps.setBoolean(5, true);
             ps.executeUpdate();
         }
     }
@@ -57,9 +58,10 @@ public class ConductorDAO {
     }
 
     public void inactivar(int id) throws SQLException {
-        String sql = "UPDATE conductores SET estado='Inactivo' WHERE id=?";
+        String sql = "UPDATE conductores SET esta_activo=? WHERE id=?";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setBoolean(1, false);
+            ps.setInt(2, id);
             ps.executeUpdate();
         }
     }

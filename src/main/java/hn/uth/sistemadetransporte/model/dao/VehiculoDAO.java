@@ -14,7 +14,7 @@ public class VehiculoDAO {
 
     public List<Vehiculo> listar() {
         List<Vehiculo> lista = new ArrayList<>();
-        String sql = "SELECT * FROM vehiculos WHERE estado = 'Activo'";
+        String sql = "SELECT * FROM vehiculos WHERE esta_activo = TRUE";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Vehiculo v = new Vehiculo();
@@ -32,12 +32,13 @@ public class VehiculoDAO {
     }
 
     public void guardar(Vehiculo v) throws SQLException {
-        String sql = "INSERT INTO vehiculos (placa, marca, modelo, anio, estado) VALUES (?,?,?,?,'Activo')";
+        String sql = "INSERT INTO vehiculos (placa, marca, modelo, anio, esta_activo) VALUES (?,?,?,?,?)";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setString(1, v.getPlaca());
             ps.setString(2, v.getMarca());
             ps.setString(3, v.getModelo());
             ps.setInt(4, v.getAnio());
+            ps.setBoolean(5, true);
             ps.executeUpdate();
         }
     }
@@ -55,9 +56,10 @@ public class VehiculoDAO {
     }
 
     public void inactivar(int id) throws SQLException {
-        String sql = "UPDATE vehiculos SET estado='Inactivo' WHERE id=?";
+        String sql = "UPDATE vehiculos SET esta_activo=? WHERE id=?";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setBoolean(1, false);
+            ps.setInt(2, id);
             ps.executeUpdate();
         }
     }

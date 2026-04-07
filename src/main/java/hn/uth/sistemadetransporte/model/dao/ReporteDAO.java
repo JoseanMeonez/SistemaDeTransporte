@@ -13,7 +13,7 @@ public class ReporteDAO {
 
     public Map<String, Integer> obtenerConteoPorMarca() {
         Map<String, Integer> datos = new HashMap<>();
-        String sql = "SELECT marca, COUNT(*) as total FROM vehiculos WHERE estado = 'Activo' GROUP BY marca";
+        String sql = "SELECT marca, COUNT(*) as total FROM vehiculos WHERE esta_activo = TRUE GROUP BY marca";
 
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);

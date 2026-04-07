@@ -16,7 +16,7 @@ public class RutaDAO {
 
     public List<Ruta> listar() {
         List<Ruta> lista = new ArrayList<>();
-        String sql = "SELECT * FROM rutas WHERE estado = 'Activo'";
+        String sql = "SELECT * FROM rutas WHERE esta_activo = TRUE";
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -36,13 +36,14 @@ public class RutaDAO {
     }
 
     public void guardar(Ruta r) {
-        String sql = "INSERT INTO rutas (nombre_ruta, origen, destino, distancia_km, estado) VALUES (?,?,?,?, 'Activo')";
+        String sql = "INSERT INTO rutas (nombre_ruta, origen, destino, distancia_km, esta_activo) VALUES (?,?,?,?,?)";
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql)) {
             ps.setString(1, r.getNombreRuta());
             ps.setString(2, r.getOrigen());
             ps.setString(3, r.getDestino());
             ps.setDouble(4, r.getDistanciaKm());
+            ps.setBoolean(5, true);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("ERROR SQL AL GUARDAR RUTA: " + e.getMessage());
@@ -65,10 +66,11 @@ public class RutaDAO {
     }
 
     public void inactivar(int id) {
-        String sql = "UPDATE rutas SET estado='Inactivo' WHERE id=?";
+        String sql = "UPDATE rutas SET esta_activo=? WHERE id=?";
         try (Connection cn = Conexion.conectar();
              PreparedStatement ps = cn.prepareStatement(sql)) {
-            ps.setInt(1, id);
+            ps.setBoolean(1, false);
+            ps.setInt(2, id);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("ERROR SQL AL INACTIVAR RUTA: " + e.getMessage());
