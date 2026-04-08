@@ -4,6 +4,10 @@
       xmlns:h="jakarta.faces.html"
       xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewAction action="#{loginBean.redirigirSiAutenticado}" onPostback="false" />
+    </f:metadata>
+
     <h:head>
         <title>Login - Sistema de Transporte</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

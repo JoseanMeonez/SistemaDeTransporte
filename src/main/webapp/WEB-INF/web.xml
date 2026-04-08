@@ -14,6 +14,17 @@
     <url-pattern>*.xhtml</url-pattern>
 </servlet-mapping>
 
+    <filter>
+        <filter-name>SessionFilter</filter-name>
+        <filter-class>hn.uth.sistemadetransporte.util.SessionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionFilter</filter-name>
+        <url-pattern>*.xhtml</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+
     
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>

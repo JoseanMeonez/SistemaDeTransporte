@@ -13,14 +13,20 @@ import java.io.Serializable;
 public class LoginBean implements Serializable {
     private String username;
     private String password;
+    private String usuarioAutenticado;
     private UsuarioDAO dao = new UsuarioDAO();
 
     public String autenticar() {
         if (dao.login(username, password)) {
-            // Si es correcto, redirigimos al menú o dashboard
+            usuarioAutenticado = username;
+            password = null;
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
+                    .put("usuarioAutenticado", usuarioAutenticado);
             return "menu?faces-redirect=true";
         } else {
-            // Si es incorrecto, enviamos un mensaje de error a PrimeFaces
+            usuarioAutenticado = null;
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap()
+                    .remove("usuarioAutenticado");
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Usuario o clave incorrectos"));
             return null;
@@ -28,8 +34,40 @@ public class LoginBean implements Serializable {
     }
 
     public String cerrarSesion() {
+        usuarioAutenticado = null;
+        username = null;
+        password = null;
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        return "login?faces-redirect=true";
+        return "index?faces-redirect=true";
+    }
+
+    public String redirigirSiAutenticado() {
+        if (isAutenticado()) {
+            return "menu?faces-redirect=true";
+        }
+        return null;
+    }
+
+    public boolean isAutenticado() {
+        if (usuarioAutenticado != null && !usuarioAutenticado.isBlank()) {
+            return true;
+        }
+
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context == null) {
+            return false;
+        }
+
+        Object usuarioSesion = context.getExternalContext().getSessionMap().get("usuarioAutenticado");
+        if (usuarioSesion instanceof String) {
+            String usuario = (String) usuarioSesion;
+            if (!usuario.isBlank()) {
+                usuarioAutenticado = usuario;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Getters y Setters para username y password
@@ -47,5 +85,9 @@ public class LoginBean implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getUsuarioAutenticado() {
+        return usuarioAutenticado;
     }
 }
