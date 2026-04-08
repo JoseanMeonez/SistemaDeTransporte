@@ -12,7 +12,7 @@
                 <p class="hero-kicker">Vista general</p>
                 <h2 class="page-title">Panel de control</h2>
                 <p class="page-subtitle">
-                    Consulta el estado de la flota, abre accesos directos y revisa la distribución por marca desde una sola pantalla.
+                    Consulta el estado de la flota y revisa la distribución por marca desde una sola pantalla.
                 </p>
             </div>
 
@@ -72,28 +72,24 @@
         <div class="dashboard-layout">
             <section class="surface-card feature-panel">
                 <div class="panel-head">
-                    <h3>Accesos rápidos</h3>
-                    <p>Entra directo a los módulos de operación más usados.</p>
+                    <h3>Flota por marca</h3>
+                    <p>Distribución actual de vehículos activos.</p>
                 </div>
 
-                <div class="quick-actions">
-                    <p:button value="Vehículos" outcome="vehiculos" icon="pi pi-car" styleClass="quick-action-button" />
-                    <p:button value="Conductores" outcome="conductores" icon="pi pi-users" styleClass="quick-action-button" />
-                    <p:button value="Rutas" outcome="rutas" icon="pi pi-map" styleClass="quick-action-button" />
-                    <p:button value="Mantenimiento" outcome="mantenimiento" icon="pi pi-calendar-plus" styleClass="quick-action-button quick-action-button--secondary" />
-                    <p:button value="Combustible" outcome="combustible" icon="pi pi-percentage" styleClass="quick-action-button quick-action-button--secondary" />
-                    <p:button value="GPS" outcome="gps" icon="pi pi-map-marker" styleClass="quick-action-button quick-action-button--secondary" />
-                    <p:button value="Reportes" outcome="reportes" icon="pi pi-chart-line" styleClass="quick-action-button quick-action-button--secondary" />
+                <div class="chart-holder">
+                    <p:donutChart model="#{chartBean.donutModel}" style="width: 100%; height: 100%;" />
                 </div>
             </section>
 
             <section class="surface-card feature-panel">
                 <div class="panel-head">
-                    <h3>Flota por marca</h3>
-                    <p>Distribución actual de vehículos activos.</p>
+                    <h3>Combustible cargado por vehículo</h3>
+                    <p>Acumulado de galones cargados ordenado por vehículo activo.</p>
                 </div>
 
-                <p:donutChart model="#{chartBean.donutModel}" style="width: 100%; height: 360px;" />
+                <div class="chart-holder">
+                    <p:barChart model="#{chartBean.barModel}" style="width: 100%; height: 100%;" />
+                </div>
             </section>
         </div>
     </ui:define>

@@ -264,9 +264,28 @@ a {
 
 .dashboard-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
-    align-items: start;
+    align-items: stretch;
+}
+
+.dashboard-layout .feature-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-layout .chart-holder {
+    flex: 1;
+    min-height: 420px;
+}
+
+.dashboard-layout .chart-holder .ui-chart {
+    height: 100%;
+}
+
+.dashboard-layout .chart-holder canvas {
+    height: 100% !important;
 }
 
 .surface-card,
