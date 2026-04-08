@@ -31,6 +31,25 @@ public class VehiculoDAO {
         return lista;
     }
 
+    public List<Vehiculo> listarParaRelacion() {
+        List<Vehiculo> lista = new ArrayList<>();
+        String sql = "SELECT * FROM vehiculos WHERE esta_activo = TRUE OR esta_activo IS NULL";
+        try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Vehiculo v = new Vehiculo();
+                v.setId(rs.getInt("id"));
+                v.setPlaca(rs.getString("placa"));
+                v.setMarca(rs.getString("marca"));
+                v.setModelo(rs.getString("modelo"));
+                v.setAnio(rs.getInt("anio"));
+                lista.add(v);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error Listar para relacion: " + e.getMessage());
+        }
+        return lista;
+    }
+
     public void guardar(Vehiculo v) throws SQLException {
         String sql = "INSERT INTO vehiculos (placa, marca, modelo, anio, esta_activo) VALUES (?,?,?,?,?)";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql)) {

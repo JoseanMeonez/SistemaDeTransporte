@@ -35,6 +35,27 @@ public class RutaDAO {
         return lista;
     }
 
+    public List<Ruta> listarParaRelacion() {
+        List<Ruta> lista = new ArrayList<>();
+        String sql = "SELECT * FROM rutas WHERE esta_activo = TRUE OR esta_activo IS NULL";
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Ruta r = new Ruta();
+                r.setId(rs.getInt("id"));
+                r.setNombreRuta(rs.getString("nombre_ruta"));
+                r.setOrigen(rs.getString("origen"));
+                r.setDestino(rs.getString("destino"));
+                r.setDistanciaKm(rs.getDouble("distancia_km"));
+                lista.add(r);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error en RutaDAO para relacion: " + e.getMessage());
+        }
+        return lista;
+    }
+
     public void guardar(Ruta r) {
         String sql = "INSERT INTO rutas (nombre_ruta, origen, destino, distancia_km, esta_activo) VALUES (?,?,?,?,?)";
         try (Connection cn = Conexion.conectar();

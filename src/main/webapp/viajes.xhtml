@@ -1,0 +1,147 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Viajes - Sistema de Transporte</ui:define>
+
+    <ui:define name="content">
+        <section class="page-hero">
+            <div>
+                <p class="hero-kicker">Operacion diaria</p>
+                <h2 class="page-title">Gestion de viajes</h2>
+                <p class="page-subtitle">
+                    Crea, edita e inactiva viajes relacionando vehiculo, conductor y ruta.
+                </p>
+            </div>
+
+            <p:button value="Volver al panel" outcome="menu" icon="pi pi-home" styleClass="quick-action-button quick-action-button--secondary" />
+        </section>
+
+        <h:form id="formLista">
+            <p:growl id="msjs" showDetail="true" />
+
+            <div class="surface-card feature-panel">
+                <div class="toolbar-shell">
+                    <span class="status-chip status-chip--info">
+                        <i class="pi pi-send"></i>
+                        #{empty viajeBean.listaViajes ? 0 : viajeBean.listaViajes.size()} viajes activos
+                    </span>
+
+                    <p:commandButton value="Nuevo Viaje"
+                                     icon="pi pi-plus"
+                                     actionListener="#{viajeBean.prepararNuevo()}"
+                                     oncomplete="PF('dlgViaje').show()"
+                                     update=":formDialogo:pnlViaje"
+                                     styleClass="ui-button-success" />
+                </div>
+
+                <p:dataTable id="dt-viajes"
+                             value="#{viajeBean.listaViajes}"
+                             var="v"
+                             paginator="true"
+                             rows="5"
+                             emptyMessage="No hay viajes registrados."
+                             styleClass="app-table">
+                    <p:column headerText="Salida">
+                        <h:outputText value="#{v.fechaSalida}">
+                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Llegada">
+                        <h:outputText value="#{v.fechaLlegada}">
+                            <f:convertDateTime pattern="yyyy-MM-dd HH:mm" />
+                        </h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Vehiculo">#{v.placaVehiculo}</p:column>
+                    <p:column headerText="Conductor">#{v.nombreConductor}</p:column>
+                    <p:column headerText="Ruta">#{v.nombreRuta}</p:column>
+
+                    <p:column headerText="Acciones">
+                        <p:commandButton icon="pi pi-pencil"
+                                         update=":formDialogo:pnlViaje"
+                                         oncomplete="PF('dlgViaje').show()">
+                            <f:setPropertyActionListener value="#{v}" target="#{viajeBean.viaje}" />
+                        </p:commandButton>
+
+                        <p:commandButton icon="pi pi-trash"
+                                         actionListener="#{viajeBean.eliminar(v.id)}"
+                                         update="@form"
+                                         styleClass="ui-button-danger">
+                            <p:confirm header="Confirmacion"
+                                       message="¿Inactivar viaje?"
+                                       icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" />
+                </p:confirmDialog>
+            </div>
+        </h:form>
+
+        <p:dialog header="Datos del viaje"
+                  widgetVar="dlgViaje"
+                  modal="true"
+                  responsive="true"
+                  width="620"
+                  styleClass="app-dialog">
+            <h:form id="formDialogo">
+                <p:outputPanel id="pnlViaje">
+                    <h:panelGrid columns="2">
+                        <p:outputLabel value="Vehiculo" />
+                        <p:selectOneMenu value="#{viajeBean.viaje.idVehiculo}" required="true" requiredMessage="Seleccione un vehiculo">
+                            <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{viajeBean.listaVehiculos}" var="veh"
+                                           itemLabel="#{veh.placa}" itemValue="#{veh.id}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Conductor" />
+                        <p:selectOneMenu value="#{viajeBean.viaje.idConductor}" required="true" requiredMessage="Seleccione un conductor">
+                            <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{viajeBean.listaConductores}" var="con"
+                                           itemLabel="#{con.nombre}" itemValue="#{con.id}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Ruta" />
+                        <p:selectOneMenu value="#{viajeBean.viaje.idRuta}" required="true" requiredMessage="Seleccione una ruta">
+                            <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
+                            <f:selectItems value="#{viajeBean.listaRutas}" var="ruta"
+                                           itemLabel="#{ruta.nombreRuta}" itemValue="#{ruta.id}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="Fecha salida" />
+                        <p:datePicker value="#{viajeBean.viaje.fechaSalida}"
+                                      pattern="yyyy-MM-dd HH:mm:ss"
+                                      showTime="true"
+                                      showSeconds="true"
+                                      hourFormat="24"
+                                      showIcon="true"
+                                      required="true"
+                                      requiredMessage="La fecha de salida es obligatoria" />
+
+                        <p:outputLabel value="Fecha llegada" />
+                        <p:datePicker value="#{viajeBean.viaje.fechaLlegada}"
+                                      pattern="yyyy-MM-dd HH:mm:ss"
+                                      showTime="true"
+                                      showSeconds="true"
+                                      hourFormat="24"
+                                      showIcon="true" />
+                    </h:panelGrid>
+
+                    <p:commandButton value="Guardar"
+                                     actionListener="#{viajeBean.guardar()}"
+                                     update=":formLista:dt-viajes :formLista:msjs"
+                                     oncomplete="PF('dlgViaje').hide()"
+                                     styleClass="quick-action-button mt-3" />
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

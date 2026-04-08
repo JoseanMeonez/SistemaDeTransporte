@@ -33,6 +33,27 @@ public class ConductorDAO {
         return lista;
     }
 
+    public List<Conductor> listarParaRelacion() {
+        List<Conductor> lista = new ArrayList<>();
+        String sql = "SELECT * FROM conductores WHERE esta_activo = TRUE OR esta_activo IS NULL";
+        try (Connection cn = Conexion.conectar();
+             PreparedStatement ps = cn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Conductor c = new Conductor();
+                c.setId(rs.getInt("id"));
+                c.setNombre(rs.getString("nombre"));
+                c.setDni(rs.getString("dni"));
+                c.setLicencia(rs.getString("licencia"));
+                c.setTelefono(rs.getString("telefono"));
+                lista.add(c);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error Listar Conductores para relacion: " + e.getMessage());
+        }
+        return lista;
+    }
+
     public void guardar(Conductor c) throws SQLException {
         String sql = "INSERT INTO conductores (nombre, dni, licencia, telefono, esta_activo) VALUES (?,?,?,?,?)";
         try (Connection cn = Conexion.conectar(); PreparedStatement ps = cn.prepareStatement(sql)) {
