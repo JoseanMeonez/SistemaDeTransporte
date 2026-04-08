@@ -88,18 +88,21 @@
                 <p:outputPanel id="pnlGps">
                     <h:panelGrid columns="2">
                         <p:outputLabel value="Vehiculo" />
-                        <p:selectOneMenu value="#{gpsBean.gps.idVehiculo}" required="true" requiredMessage="Seleccione un vehiculo">
+                        <p:selectOneMenu id="cmbVehiculo" value="#{gpsBean.gps.idVehiculo}" required="true" requiredMessage="Seleccione un vehiculo">
                             <f:selectItem itemLabel="Seleccione" itemValue="0" noSelectionOption="true" />
                             <f:selectItems value="#{gpsBean.listaVehiculos}" var="v"
                                            itemLabel="#{v.placa}" itemValue="#{v.id}" />
                         </p:selectOneMenu>
 
                         <p:outputLabel value="Ultima actualizacion" />
-                        <p:calendar value="#{gpsBean.gps.ultimaActualizacion}"
-                                    pattern="yyyy-MM-dd HH:mm:ss"
-                                    showOn="button"
-                                    required="true"
-                                    requiredMessage="La ultima actualizacion es obligatoria" />
+                        <p:datePicker id="dpUltimaActualizacion" value="#{gpsBean.gps.ultimaActualizacion}"
+                                      pattern="yyyy-MM-dd HH:mm:ss"
+                                      showTime="true"
+                                      showSeconds="true"
+                                      hourFormat="24"
+                                      showIcon="true"
+                                      required="true"
+                                      requiredMessage="La ultima actualizacion es obligatoria" />
 
                         <p:outputLabel value="Latitud" />
                         <p:inputNumber value="#{gpsBean.gps.latitud}"
