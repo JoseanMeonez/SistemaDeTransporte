@@ -54,7 +54,8 @@ Importante:
 
 - ```p:dataTable``` :Muestra tablas CRUD con paginación.
 - ```p:column``` :Define columnas dentro de p:dataTable.
-- ```p:donutChart``` :Gráfico de reportes por marca.
+- ```p:donutChart``` :Gráfico dona.
+- ```p:barChart``` :Gráfico de barra.
 
 ## 5. Uso de AJAX (PrimeFaces)
 
